@@ -1,164 +1,224 @@
 # Build and Run
 
-## Basic Commands
+## Quick Reference
 
-### Build Your Project
 ```bash
-# Debug build (faster compilation, slower execution)
-cargo build
+# Project Setup
+cargo new project         # Create new project
+cargo init               # Initialize in existing directory
 
-# Release build (optimized, slower compilation, faster execution)
-cargo build --release
+# Development
+cargo check              # Fast compile check (no binary)
+cargo build              # Build debug version
+cargo run                # Build and run
+cargo run -- arg1 arg2   # Run with arguments
+
+# Testing & Quality
+cargo test               # Run tests
+cargo fmt                # Format code
+cargo clippy             # Lint code
+
+# Production
+cargo build --release    # Build optimized version
+cargo run --release      # Run optimized version
+
+# Maintenance
+cargo clean              # Remove build artifacts
+cargo update             # Update dependencies
+cargo doc --open         # Generate and view docs
 ```
 
-### Run Your Project
+---
+
+## 1. Terminal Workflow (No IDE)
+
+### Text Editors
+
+#### nano (Beginner-Friendly)
+
 ```bash
-# Build and run in one command (debug mode)
+nano hello.rs            # Create/edit file
+# Ctrl+O to save, Ctrl+X to exit
+```
+
+**Shortcuts:** `Ctrl+O` (save) • `Ctrl+X` (exit) • `Ctrl+K` (cut) • `Ctrl+U` (paste) • `Ctrl+W` (search)
+
+#### vim (Advanced)
+
+```bash
+vim hello.rs             # Create/edit file
+# Press 'i' for insert mode, 'Esc' to exit, ':wq' to save and quit
+```
+
+**Commands:** `i` (insert) • `Esc` (normal mode) • `:w` (save) • `:q` (quit) • `:wq` (save & quit) • `:q!` (quit without save)
+
+### Compile with rustc (Single Files)
+
+```bash
+# Create file
+nano hello.rs
+# Type: fn main() { println!("Hello, Rust!"); }
+
+# Compile and run
+rustc hello.rs
+./hello
+
+# With optimizations
+rustc -O hello.rs
+./hello
+
+# Custom output name
+rustc hello.rs -o my_program
+./my_program
+```
+
+**When to use:** Learning basics, single-file programs, quick experiments
+
+---
+
+## 2. Cargo Workflow (Projects)
+
+### Create and Run
+
+```bash
+# Create new project
+cargo new my_project
+cd my_project
+
+# Build and run (one command)
 cargo run
 
-# Run with release optimizations
-cargo run --release
-
-# Pass arguments to your program
-cargo run -- arg1 arg2
+# Or separate steps
+cargo build
+./target/debug/my_project
 ```
 
-### Check Without Building
+**When to use:** Multi-file projects, dependencies, team collaboration
+
+### Build Modes
+
+| Mode | Command | Speed | Performance | Use |
+|------|---------|-------|-------------|-----|
+| Debug | `cargo build` | Fast compile | Slower runtime | Development |
+| Release | `cargo build --release` | Slow compile | Fast runtime | Production |
+
+### Quick Check (No Binary)
+
 ```bash
-# Fast syntax and type checking (no binary output)
-cargo check
+cargo check              # Fast - only checks if code compiles
 ```
 
-## Testing
+---
+
+## 3. Testing
 
 ```bash
 # Run all tests
 cargo test
 
-# Run tests with output
+# Run with output visible
 cargo test -- --nocapture
 
 # Run specific test
 cargo test test_name
 
-# Run tests in a specific module
+# Run tests in module
 cargo test module_name::
 ```
 
-## Code Quality
+---
 
-### Format Code
+## 4. Code Quality
+
+### Format
+
 ```bash
-# Format all Rust files
-cargo fmt
-
-# Check formatting without modifying files
-cargo fmt -- --check
+cargo fmt                    # Format all files
+cargo fmt -- --check         # Check without modifying
 ```
 
-### Lint Code
-```bash
-# Run Clippy linter
-cargo clippy
+### Lint
 
-# Treat warnings as errors
-cargo clippy -- -D warnings
+```bash
+cargo clippy                 # Run linter
+cargo clippy -- -D warnings  # Treat warnings as errors
 ```
 
-## Cleaning Build Artifacts
+---
 
-```bash
-# Remove target directory and build artifacts
-cargo clean
+## 5. Advanced Features
+
+### Custom Build Profiles
+
+Add to `Cargo.toml`:
+
+```toml
+[profile.dev]
+opt-level = 0               # No optimization (fast compile)
+
+[profile.release]
+opt-level = 3               # Maximum optimization
+lto = true                  # Link-time optimization
+codegen-units = 1           # Better optimization
 ```
 
-## Running Examples
+### Auto-Rebuild on Changes
 
 ```bash
-# Run a specific example from examples/ directory
+# Install cargo-watch
+cargo install cargo-watch
+
+# Watch and rebuild
+cargo watch -x check        # Check on changes
+cargo watch -x test         # Test on changes
+cargo watch -x run          # Run on changes
+```
+
+### Documentation
+
+```bash
+cargo doc --open                      # Generate and open docs
+cargo doc --document-private-items    # Include private items
+```
+
+### Running Examples
+
+```bash
 cargo run --example example_name
 ```
 
-## Build Profiles
+---
 
-Cargo uses different optimization levels:
+## 6. Development Workflow
 
-| Profile | Command | Optimization | Debug Info | Use Case |
-|---------|---------|--------------|------------|----------|
-| Dev     | `cargo build` | Low (fast compile) | Yes | Development |
-| Release | `cargo build --release` | High (slow compile) | No | Production |
-
-### Custom Profile (Cargo.toml)
-```toml
-[profile.dev]
-opt-level = 0
-
-[profile.release]
-opt-level = 3
-lto = true              # Link-time optimization
-codegen-units = 1       # Better optimization
-```
-
-## Watch Mode (Auto-rebuild)
-
-Install cargo-watch:
-```bash
-cargo install cargo-watch
-```
-
-Use it:
-```bash
-# Automatically rebuild on file changes
-cargo watch -x build
-
-# Auto-run on changes
-cargo watch -x run
-
-# Auto-test on changes
-cargo watch -x test
-```
-
-## Documentation
+**Recommended sequence:**
 
 ```bash
-# Generate and open documentation
-cargo doc --open
-
-# Include private items
-cargo doc --document-private-items
+1. cargo check          # Fast compile check
+2. cargo test           # Run tests
+3. cargo clippy         # Lint code
+4. cargo fmt            # Format code
+5. cargo run            # Run program
 ```
 
-## Common Workflow
+---
+
+## 7. Cleanup
 
 ```bash
-# 1. Check code compiles (fast)
-cargo check
-
-# 2. Run tests
-cargo test
-
-# 3. Lint code
-cargo clippy
-
-# 4. Format code
-cargo fmt
-
-# 5. Run the program
-cargo run
+cargo clean             # Remove target/ directory
 ```
 
-## Quick Reference
+---
 
-```bash
-cargo new project    # Create new project
-cargo build          # Compile project
-cargo run            # Build and run
-cargo test           # Run tests
-cargo check          # Fast compile check
-cargo fmt            # Format code
-cargo clippy         # Lint code
-cargo clean          # Clean build files
-cargo update         # Update dependencies
-```
+## Comparison: rustc vs cargo
 
-Happy coding!
+| Feature | rustc | cargo |
+|---------|-------|-------|
+| **Use Case** | Single files, learning | Real projects |
+| **Dependencies** | Manual | Automatic |
+| **Build Tool** | None | Built-in |
+| **Project Structure** | Flat | Organized |
+| **Best For** | Quick tests | Production code |
+
+Happy coding! 🦀
